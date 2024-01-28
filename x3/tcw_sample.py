@@ -8,6 +8,7 @@ from collections import OrderedDict
 import torch
 import torch.nn as nn
 import skimage.measure as measure #tcw201904101622tcw
+from skimage import metrics
 from torch.autograd import Variable
 from dataset import TestDataset
 from PIL import Image
@@ -43,7 +44,7 @@ def psnr(im1, im2): #tcw201904101621
         
     im1 = im2double(im1)
     im2 = im2double(im2)
-    psnr = measure.compare_psnr(im1, im2, data_range=1)
+    psnr = metrics.peak_signal_noise_ratio(im1, im2, data_range=1)
     return psnr
 #tcw20190413043
 def calculate_ssim(img1, img2, border=0):
@@ -192,7 +193,7 @@ def sample(net, device, dataset, cfg):
 
         sr_im_path = os.path.join(sr_dir, "{}".format(name.replace("HR", "SR"))) #use SR instead of HR in the name of high-resolution image
         hr_im_path = os.path.join(hr_dir, "{}".format(name))#name is a name of high-resolution image
-        print sr_im_path #sample/Urban100/x2/SR/img_100_SRF_2_SR.png
+        # print(sr_im_path) #sample/Urban100/x2/SR/img_100_SRF_2_SR.png
         #print hr_im_path #sample/Urban100/x2/HR/img_100_SRF_2_HR.png
         save_image(sr, sr_im_path)
         save_image(hr, hr_im_path)
@@ -231,7 +232,7 @@ def sample(net, device, dataset, cfg):
         mean_ssim += calculate_ssim(sr_1,hr_1)/len(dataset)
         a = psnr(sr_1,hr_1)
         b = calculate_ssim(sr_1,hr_1)
-        print (step,a, b)
+        # print (step,a, b)
         #print mean_psnr2, mean_ssim, len(dataset)
         #print len(dataset) #it is only used to debug the code.
         #mean_psnr += psnr(im1, im2) / len(dataset) #tcw
@@ -266,7 +267,7 @@ def main(cfg):
 	print(''+ str(k))
     '''
     print(json.dumps(vars(cfg), indent=4, sort_keys=True)) #print cfg information according order.
-    state_dict = torch.load(cfg.ckpt_path)
+    state_dict = torch.load(cfg.ckpt_path, map_location=torch.device('cpu'))
     new_state_dict = OrderedDict()
     for k, v in state_dict.items():
         name = k

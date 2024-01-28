@@ -8,6 +8,7 @@ from collections import OrderedDict
 import torch
 import torch.nn as nn
 import skimage.measure as measure #tcw201904101622tcw
+from skimage import metrics
 from torch.autograd import Variable
 from dataset import TestDataset
 from PIL import Image
@@ -43,7 +44,8 @@ def psnr(im1, im2): #tcw201904101621
         
     im1 = im2double(im1)
     im2 = im2double(im2)
-    psnr = measure.compare_psnr(im1, im2, data_range=1)
+    # psnr = measure.compare_psnr(im1, im2, data_range=1)
+    psnr = metrics.peak_signal_noise_ratio(im1, im2, data_range=1)
     return psnr
 #tcw20190413043
 def calculate_ssim(img1, img2, border=0):
@@ -192,7 +194,7 @@ def main(cfg):
     net = module.Net(scale=cfg.scale, 
                      group=cfg.group)
     print(json.dumps(vars(cfg), indent=4, sort_keys=True)) #print cfg information according order.
-    state_dict = torch.load(cfg.ckpt_path)
+    state_dict = torch.load(cfg.ckpt_path, map_location=torch.device('cpu'))
     new_state_dict = OrderedDict()
     for k, v in state_dict.items():
         name = k
