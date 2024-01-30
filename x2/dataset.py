@@ -87,8 +87,8 @@ class TestDataset(data.Dataset):
                                              "X{}/*.png".format(scale)))
         else:
             all_files = glob.glob(os.path.join(dirname, "x{}/*.png".format(scale)))
-            self.hr = [name for name in all_files if "x2" in name] # Usually "HR" in name
-            self.lr = [name for name in all_files if "x1" in name] # x1 , x2 for LR and HR in DRealSR
+            self.hr = [name for name in all_files if "HR" in name]
+            self.lr = [name for name in all_files if "LR" in name]
 
         self.hr.sort()
         self.lr.sort()

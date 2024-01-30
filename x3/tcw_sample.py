@@ -14,6 +14,7 @@ from dataset import TestDataset
 from PIL import Image
 import cv2 #201904111751tcwi
 from torchsummary import summary #tcw20190623
+import pdb
 #from torchsummaryX import summary #tcw20190625
 os.environ['CUDA_VISIBLE_DEVICES']='0'
 def parse_args():
@@ -44,6 +45,7 @@ def psnr(im1, im2): #tcw201904101621
         
     im1 = im2double(im1)
     im2 = im2double(im2)
+    # pdb.set_trace()
     psnr = metrics.peak_signal_noise_ratio(im1, im2, data_range=1)
     return psnr
 #tcw20190413043
@@ -232,7 +234,7 @@ def sample(net, device, dataset, cfg):
         mean_ssim += calculate_ssim(sr_1,hr_1)/len(dataset)
         a = psnr(sr_1,hr_1)
         b = calculate_ssim(sr_1,hr_1)
-        # print (step,a, b)
+        print (step,a, b)
         #print mean_psnr2, mean_ssim, len(dataset)
         #print len(dataset) #it is only used to debug the code.
         #mean_psnr += psnr(im1, im2) / len(dataset) #tcw
